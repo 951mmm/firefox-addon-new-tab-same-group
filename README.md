@@ -17,7 +17,7 @@ This extension only works with **native tab grouping** (Firefox 138+).
   - **After active tab** (default)
   - **At the beginning** of the current group
   - **At the end** of the current group
-- ⌨️ **NEW:** Optional keyboard shortcut (`Alt+Shift+T` by default) to open a new tab in the standard Firefox way, without applying grouping logic. This can be toggled in the extension's options.
+- ⌨️ **DONE:** Optional keyboard shortcut (`Alt+Shift+T` by default) to open a new tab in the standard Firefox way, without applying grouping logic. This can be toggled in the extension's options.
 - 🧠 Smarter tracking of the active tab for reliable grouping across windows
 - 🖤 Fully supports Firefox's native tab groups
 - 🔒 Zero tracking, zero external dependencies
@@ -48,7 +48,7 @@ If you don’t see tab groups:
 - Open the sidebar via `F9` or View → Sidebar → Tabs
 - Right-click on a tab and choose **Move Tab to New Group**
 
-### If tab grouping is missing entirely:
+### If tab grouping is missing entirely
 
 1. Go to `about:config`
 2. Search for `browser.tabs.grouping.enabled`
@@ -64,6 +64,7 @@ If you don’t see tab groups:
 You can enable a keyboard shortcut (`Alt+Shift+T` by default) in the extension's options to open a new tab that bypasses the extension's grouping logic. This is useful if you occasionally want a new tab to open with Firefox's default behavior.
 
 You can customize this shortcut via Firefox's "Manage Extension Shortcuts" menu:
+
 1. Go to `about:addons`.
 2. Click the gear icon ⚙️ in the top-right corner.
 3. Select "Manage Extension Shortcuts".

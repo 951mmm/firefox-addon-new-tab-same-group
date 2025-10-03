@@ -1,25 +1,27 @@
 /* === Helpers ================================================== */
-const $  = s => document.querySelector(s);
+const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
 /* === Elements ================================================= */
-const enableGroupTab   = $('#enableGroupTab');
-const placementCard    = $('#placementCard');
-const placementRadios  = $$('input[name="placement"]');
+const enableGroupTab = $('#enableGroupTab');
+const placementCard = $('#placementCard');
+const placementRadios = $$('input[name="placement"]');
 
-const enableStdShort   = $('#enableStandardShortcut');
-const enableDelay      = $('#enableDelay');
+const enableStdShort = $('#enableStandardShortcut');
+const enableDelay = $('#enableDelay');
 
 /* === Load prefs ============================================== */
 chrome.storage.sync.get(
-  { enableGroupTab:true, placementMode:'after',
-    enableStandardTabShortcut:true, enableDelayGrouping:false },
+  {
+    enableGroupTab: true, placementMode: 'after',
+    enableStandardTabShortcut: true, enableDelayGrouping: false
+  },
   p => {
-    enableGroupTab.checked  = p.enableGroupTab;
+    enableGroupTab.checked = p.enableGroupTab;
     togglePlacement(p.enableGroupTab);
     placementRadios.forEach(r => r.checked = (r.value === p.placementMode));
-    enableStdShort.checked  = p.enableStandardTabShortcut;
-    enableDelay.checked     = p.enableDelayGrouping;
+    enableStdShort.checked = p.enableStandardTabShortcut;
+    enableDelay.checked = p.enableDelayGrouping;
   }
 );
 
@@ -50,7 +52,7 @@ $$('.editShortcut').forEach(link =>
 );
 
 /* === UI helper =============================================== */
-function togglePlacement(state){
+function togglePlacement(state) {
   placementCard.classList.toggle('disabled', !state);
   placementRadios.forEach(r => r.disabled = !state);
 }
