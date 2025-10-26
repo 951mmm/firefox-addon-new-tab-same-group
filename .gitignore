@@ -30,5 +30,5 @@ package-lock.json
 *.zip
 *.xpi
 
-# VS Code
-.vscode/
+
+dist

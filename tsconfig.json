@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    // es8
+    "target": "es2017",
+    // 模块系统（ES6 模块，支持 import/export）
+    "module": "es6",
+    // 模块解析方式
+    "moduleResolution": "Node",
+    // 生成 .d.ts 类型声明文件（可选）
+    "declaration": false,
+    // 输出目录（编译后的 JS 文件）
+    "outDir": "dist",
+    // 源文件目录（TS 源码）
+    "rootDir": "src",
+    // 启用严格模式（强类型检查）
+    "strict": true,
+    // 允许从无默认导出的模块中默认导入（适配部分库）
+    "allowSyntheticDefaultImports": true,
+    // 类型定义文件路径
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["firefox-webext-browser", "chrome"],
+    "lib": ["ES2017", "DOM"]
+  },
+  // 需要编译的 TS 文件（排除 node_modules）
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

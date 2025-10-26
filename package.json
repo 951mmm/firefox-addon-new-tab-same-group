@@ -1,0 +1,27 @@
+{
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "clean": "rm -rf dist; rm -rf web-ext-artifacts",
+    "lint": "eslint ./src/**/*.ts --fix; web-ext lint",
+    "static:watch": "node ./scripts/watch-static.js",
+    "ts:watch": "tsc --watch",
+    "watch": "run-p static:watch ts:watch"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@types/chrome": "^0.1.24",
+    "@types/firefox-webext-browser": "^143.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "chokidar": "^4.0.3",
+    "copyfiles": "^2.4.1",
+    "eslint": "^9.38.0",
+    "fs-extra": "^11.3.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "web-ext": "^9.1.0"
+  }
+}
