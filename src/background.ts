@@ -9,8 +9,8 @@ class Background {
   #groupHandler;
   #groupTaskManager;
   #shortcutManager;
-  #captureOpenStandardNewTab = false;
   #lastCommand = new String()
+  #groupConfig: GroupConfig | undefined
 
   constructor() {
     this.#configManager = new ConfigManager();
@@ -22,20 +22,25 @@ class Background {
       this.#configManager,
       this.#groupHandler
     );
-
-    this.bindEvents();
-    this.setupInstallListener();
+    this.#bindBrowserEvents();
+    this.#setupInstallListener();
+    this.#bindExtensionEvents();
   }
 
-  bindEvents() {
-    browser.tabs.onCreated.addListener(this.handleTabCreated);
-
+  #bindBrowserEvents() {
+    browser.tabs.onCreated.addListener(this.#handleTabCreated);
     this.#shortcutManager.onCommand = (cmd) => {
       this.#lastCommand = cmd
       switch (cmd) {
         case ShortcutManager.commands.OPEN_STANDARD_NEW_TAB:
+          browser.tabs.create({});
+          break;
         case ShortcutManager.commands.OPEN_STANDARD_TAB_IN_NEW_GROUP:
           browser.tabs.create({});
+          this.#groupConfig = undefined;
+          break;
+        case ShortcutManager.commands.OPEN_SIDEBAR:
+          browser.sidebarAction.open()
           break;
         case ShortcutManager.commands.CANCEL_PENDING_GROUPING:
           this.#groupTaskManager.cancelAll();
@@ -46,19 +51,19 @@ class Background {
     };
   }
 
-  handleTabCreated = (newTab: Tab) => {
+  #handleTabCreated = (newTab: Tab) => {
     const { enableGroupTab } = this.#configManager.getConfig();
     if (!enableGroupTab) return;
-
     switch (this.#lastCommand) {
       case ShortcutManager.commands.OPEN_STANDARD_NEW_TAB: {
         console.debug(`open new tab [${newTab.id}] on standard way`);
         break;
       }
-      case ShortcutManager.commands.OPEN_STANDARD_TAB_IN_NEW_GROUP: {
+      case ShortcutManager.commands.OPEN_STANDARD_TAB_IN_NEW_GROUP:
+      case ShortcutManager.commands.OPEN_SIDEBAR: {
         console.debug(`open new tab [${newTab.id}] on standard way, and in a new group`);
+        this.#groupHandler.addToNewGroup(newTab, this.#groupConfig)
         // 不走调度，走nm
-        this.#groupHandler.addToNewGroup(newTab);
         break;
       }
       default: {
@@ -71,10 +76,27 @@ class Background {
   }
 
   // 安装/更新日志
-  setupInstallListener() {
+  #setupInstallListener() {
     browser.runtime.onInstalled.addListener(({ reason }) => {
       console.log("extension update:", reason);
     });
+  }
+
+  #bindExtensionEvents() {
+    browser.runtime.onMessage.addListener((msg: Message) => {
+      switch (msg.header) {
+        case "build-group": {
+          this.#groupConfig = msg.payload;
+          browser.tabs.create({})
+          break;
+        }
+        // open the sidebar by btn will fire the msg
+        case "sidebar-open": {
+          this.#lastCommand = ShortcutManager.commands.OPEN_SIDEBAR;
+          break;
+        }
+      }
+    })
   }
 }
 

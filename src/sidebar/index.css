@@ -1,0 +1,254 @@
+/* 全局共享变量（统一管理尺寸与颜色，方便主题切换） */
+:root {
+    /* 布局变量 */
+    --section-gap: 15px;
+    --body-padding: 15px;
+    --container-min-width: 200px;
+    --container-max-width: 300px;
+    /* 新增：限制最大宽度，避免过宽 */
+
+    /* 色块变量 */
+    --color-item-size: 30px;
+    --color-item-gap: 8px;
+    --color-item-radius: 3px;
+
+    /* 卡片与遮罩变量 */
+    --card-radius: 6px;
+    --card-padding: 12px 16px;
+    --overlay-padding: 6px 16px;
+    --overlay-radius: 4px;
+    --transition-base: all 0.2s ease;
+    /* 统一过渡动画 */
+
+    /* Light 主题 */
+    --light-bg: #ffffff;
+    --light-text: #333333;
+    --light-text-secondary: #666666;
+    --light-border: #ddd;
+    --light-border-strong: #999;
+    --light-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    --light-overlay-bg: rgba(0, 0, 0, 0.1);
+    --light-overlay-bg-hover: rgba(0, 0, 0, 0.2);
+    --light-overlay-border: #999;
+    --light-overlay-text: #333;
+
+    /* Dark 主题 */
+    --dark-bg: #2b2b2b;
+    --dark-text: #f0f0f0;
+    --dark-text-secondary: #bbb;
+    --dark-border: #555;
+    --dark-border-strong: #ccc;
+    --dark-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
+    --dark-overlay-bg: rgba(255, 255, 255, 0.1);
+    --dark-overlay-bg-hover: rgba(255, 255, 255, 0.2);
+    --dark-overlay-border: #666;
+    --dark-overlay-text: #eee;
+}
+
+/* 基础样式（复用变量，减少重复） */
+body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    padding: var(--body-padding);
+    margin: 0;
+    min-width: var(--container-min-width);
+    max-width: var(--container-max-width);
+    /* 限制最大宽度 */
+    transition: var(--transition-base);
+    /* 统一过渡 */
+}
+
+#groupname-input {
+    width: 100%;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: var(--transition-base);
+}
+
+/* 颜色选择区（Grid布局优化） */
+#color-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--color-item-size), 1fr));
+    gap: var(--color-item-gap);
+    justify-items: center;
+    /* 色块在单元格内居中 */
+    padding: 5px 0;
+    /* 增加上下内边距，避免紧贴输入框 */
+}
+
+.color-option {
+    width: var(--color-item-size);
+    height: var(--color-item-size);
+    border-radius: var(--color-item-radius);
+    cursor: pointer;
+    border: 1px solid;
+    transition: var(--transition-base);
+    box-sizing: border-box;
+    /* 边框计入尺寸，避免选中时变形 */
+}
+
+/* 分组列表区域 */
+.group-section {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: var(--transition-base);
+}
+
+/* 遮罩样式（核心优化：完全依赖主题变量） */
+.insert-overlay {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: var(--overlay-padding);
+    margin: 2px 0;
+    border: 1px dashed;
+    border-radius: var(--overlay-radius);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.insert-overlay:first-child {
+    margin-bottom: 8px;
+}
+
+/* 卡片容器：控制遮罩显示逻辑 */
+.group-card__wrapper {
+    margin-bottom: 4px;
+    transition: var(--transition-base);
+}
+
+.group-card__wrapper:hover .insert-overlay {
+    display: flex;
+}
+
+.insert-overlay__plus {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.insert-overlay__label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* 分组卡片样式 */
+.group-card {
+    padding: var(--card-padding);
+    border-radius: var(--card-radius);
+    transition: var(--transition-base);
+}
+
+.group-card__wrapper:hover .group-card {
+    transform: translateY(-2px);
+}
+
+.group-card__title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.group-card__status {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* 浅色模式（完整主题变量复用） */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: var(--light-bg);
+        color: var(--light-text);
+    }
+
+    #groupname-input {
+        border: 1px solid var(--light-border);
+        background-color: var(--light-bg);
+        color: var(--light-text);
+    }
+
+    #groupname-input::placeholder {
+        color: var(--light-text-secondary);
+    }
+
+    .color-option {
+        border-color: var(--light-border);
+    }
+
+    .color-option.selected {
+        border-color: var(--light-border-strong);
+        box-shadow: var(--light-shadow);
+    }
+
+    .section-title {
+        color: var(--light-text);
+    }
+
+    .insert-overlay {
+        background-color: var(--light-overlay-bg);
+        border-color: var(--light-overlay-border);
+        color: var(--light-overlay-text);
+    }
+
+    .insert-overlay:hover {
+        background-color: var(--light-overlay-bg-hover);
+    }
+
+    .group-card {
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* 深色模式（完整主题变量复用） */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--dark-bg);
+        color: var(--dark-text);
+    }
+
+    #groupname-input {
+        border: 1px solid var(--dark-border);
+        background-color: #3a3a3a;
+        color: var(--dark-text);
+    }
+
+    #groupname-input::placeholder {
+        color: var(--dark-text-secondary);
+    }
+
+    .color-option {
+        border-color: var(--dark-border);
+    }
+
+    .color-option.selected {
+        border-color: var(--dark-border-strong);
+        box-shadow: var(--dark-shadow);
+    }
+
+    .section-title {
+        color: var(--dark-text);
+    }
+
+    .insert-overlay {
+        background-color: var(--dark-overlay-bg);
+        border-color: var(--dark-overlay-border);
+        color: var(--dark-overlay-text);
+    }
+
+    .insert-overlay:hover {
+        background-color: var(--dark-overlay-bg-hover);
+    }
+
+    .group-card {
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+}

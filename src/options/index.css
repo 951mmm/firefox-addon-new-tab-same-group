@@ -1,0 +1,206 @@
+/* === Reset & Base ============================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* 基础样式（主题无关属性） */
+body {
+  padding: 20px;
+  min-width: 360px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* === Card ==================================================== */
+.card {
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card .label {
+  flex-grow: 1;
+  margin-right: 16px;
+}
+
+.card .label small {
+  display: block;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  transition: color 0.3s ease;
+}
+
+/* === Toggle ================================================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: 0.3s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 28px;
+  width: 28px;
+  left: 2px;
+  bottom: 2px;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked+.slider:before {
+  transform: translateX(28px);
+}
+
+/* === Radios ================================================== */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 12px;
+  font-size: 0.95rem;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+}
+
+.radio-group input {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* === Disabled state ========================================== */
+#placementCard.disabled,
+#standardShortcutCard.disabled,
+#delayCard.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* === <kbd> styling & links =================================== */
+kbd {
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin: 0 2px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.editShortcut {
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.editShortcut:hover {
+  text-decoration: underline;
+}
+
+/* === Dark Mode =============================================== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #111218;
+    color: #eef0f5;
+  }
+
+  .card {
+    background: #252833;
+    border: 1px solid #3a3f54;
+  }
+
+  .card .label small {
+    color: #adb5bd;
+  }
+
+  .slider {
+    background: #44475a;
+  }
+
+  .slider:before {
+    background: #eef0f5;
+  }
+
+  input:checked+.slider {
+    background: #2ecc71;
+  }
+
+  kbd {
+    background: #3e4452;
+    border: 1px solid #505662;
+    color: #e0e0e0;
+  }
+
+  .editShortcut {
+    color: #4ea1f3;
+  }
+}
+
+/* === Light Mode ============================================== */
+@media (prefers-color-scheme: light) {
+  body {
+    background: #f8f9fa;
+    color: #212529;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+  }
+
+  .card .label small {
+    color: #6c757d;
+  }
+
+  .slider {
+    background: #ced4da;
+  }
+
+  .slider:before {
+    background: #ffffff;
+  }
+
+  input:checked+.slider {
+    background: #2ecc71;
+  }
+
+  kbd {
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #212529;
+  }
+
+  .editShortcut {
+    color: #0d6efd;
+  }
+}

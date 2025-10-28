@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "build": "node ./scripts/build.js",
+    "build": "node ./scripts/build.cjs",
     "clean": "rm -rf dist; rm -rf web-ext-artifacts",
     "lint": "eslint ./src/**/*.ts --fix; web-ext lint",
-    "static:watch": "node ./scripts/watch-static.js",
+    "static:watch": "node ./scripts/watch-static.cjs",
     "ts:watch": "tsc --watch",
     "watch": "run-p static:watch ts:watch"
   },

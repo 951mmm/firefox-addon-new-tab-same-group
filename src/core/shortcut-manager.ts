@@ -2,6 +2,7 @@ export class ShortcutManager {
   static commands = {
     OPEN_STANDARD_NEW_TAB: "open-standard-new-tab",
     OPEN_STANDARD_TAB_IN_NEW_GROUP: "open-standard-tab-in-new-group",
+    OPEN_SIDEBAR: "open-sidebar",
     CANCEL_PENDING_GROUPING: "cancel-pending-grouping"
   };
   #keyMap = new Map<string, string>();

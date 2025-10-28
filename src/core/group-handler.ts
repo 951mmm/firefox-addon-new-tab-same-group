@@ -26,13 +26,41 @@ export class GroupHandler {
     }
   }
 
-  async addToNewGroup(newTab: Tab) {
+  async addToNewGroup(newTab: Tab, groupConfig: GroupConfig | undefined) {
     if (newTab.id === undefined) {
       return;
     }
-    await browser.tabs.group({
+    const groupId = await browser.tabs.group({
       tabIds: [newTab.id]
     })
+    if (groupConfig) {
+      const { color, title, position, relativeGroupId } = groupConfig
+      await browser.tabGroups.update(groupId, {
+        color,
+        title
+      })
+      switch (position) {
+        case "top": {
+          break
+        }
+        case "after": {
+          const tabs = await browser.tabs.query({ groupId: relativeGroupId })
+          const maxIndex = tabs.map(tab => tab.index).sort((l, r) => r - l)[0]
+          await browser.tabGroups.move(groupId, {
+            index: maxIndex + 1
+          })
+          break
+        }
+        case "before": {
+          const tabs = await browser.tabs.query({ groupId: relativeGroupId })
+          const minIndex = tabs.map(tab => tab.index).sort((l, r) => l - r)[0]
+          await browser.tabGroups.move(groupId, {
+            index: minIndex
+          })
+          break
+        }
+      }
+    }
   }
 
   async #handlePlacement(newTab: Tab, lastActiveTab: Tab, placementMode: Config["placementMode"]) {
