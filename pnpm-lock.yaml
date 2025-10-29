@@ -38,9 +38,6 @@ importers:
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
-      core-js:
-        specifier: ^3.46.0
-        version: 3.46.0
       eslint:
         specifier: ^9.38.0
         version: 9.38.0
@@ -1115,9 +1112,6 @@ packages:
 
   core-js-compat@3.46.0:
     resolution: {integrity: sha512-p9hObIIEENxSV8xIu+V68JjSeARg6UVMG5mR+JEUguG3sI6MsiS1njz2jHmyJDvA+8jX/sytkBHup6kxhM9law==}
-
-  core-js@3.46.0:
-    resolution: {integrity: sha512-vDMm9B0xnqqZ8uSBpZ8sNtRtOdmfShrvT6h2TuQGLs0Is+cR0DYbj/KWP6ALVNbWPpqA/qPLoOuppJN07humpA==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -4062,8 +4056,6 @@ snapshots:
   core-js-compat@3.46.0:
     dependencies:
       browserslist: 4.27.0
-
-  core-js@3.46.0: {}
 
   core-util-is@1.0.3: {}
 

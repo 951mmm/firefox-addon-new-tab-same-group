@@ -1,7 +1,8 @@
 {
   "scripts": {
+    "pack:src": "pnpm clean; rm -rf node_modules; tar -czvf firefox-addon-new-tab-same-group.tar.gz *",
     "build": "node ./scripts/build.cjs",
-    "clean": "rm -rf dist; rm -rf web-ext-artifacts",
+    "clean": "rm -rf dist web-ext-artifacts *.tar.gz",
     "lint": "eslint ./src/**/*.ts --fix; web-ext lint",
     "static:watch": "node ./scripts/watch-static.cjs",
     "ts:watch": "tsc --watch",
