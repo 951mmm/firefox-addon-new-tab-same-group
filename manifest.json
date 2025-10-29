@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "New Tab Same Group Fix",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Automatically adds new tabs to the same group as the active tab in Firefox.",
   "icons": {
     "128": "asset/new-tab-same-group-128.png"

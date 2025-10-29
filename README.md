@@ -1,7 +1,7 @@
 # New Tab Same Group Fix
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
-![version](https://img.shields.io/badge/version-1.8.0-orange)
+![version](https://img.shields.io/badge/version-1.8.1-orange)
 
 **New Tab Same Group Fix** is a Firefox extension that improves tab organization and group management by automatically inserting new tabs into the same group as your current active tab — right after it, at the beginning, or at the end of the group, based on your preference.
 This extension only works with **native tab grouping** as well as **[extension tab group API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabGroups)** (Firefox 139+).

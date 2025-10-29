@@ -121,12 +121,42 @@ const fetchRealTabGroups = async (): Promise<TabGroup[]> => {
     return []; // 出错时返回空数组，避免页面崩溃
   }
 };
+// 创建插入遮罩（纯 DOM 方法）
+const createInsertOverlay = (
+  position: "top" | "bottom",
+  label: string,
+  onClick: () => void
+) => {
+  const overlay = document.createElement("div");
+  overlay.className = `insert-overlay insert-overlay--${position}`;
+
+  // 创建加号元素
+  const plusSpan = document.createElement("span");
+  plusSpan.className = "insert-overlay__plus";
+  plusSpan.textContent = "+"; // 用 textContent 避免注入风险
+
+  // 创建提示文字元素
+  const labelSpan = document.createElement("span");
+  labelSpan.className = "insert-overlay__label";
+  labelSpan.textContent = label; // 安全设置文本
+
+  // 组装遮罩
+  overlay.appendChild(plusSpan);
+  overlay.appendChild(labelSpan);
+  overlay.addEventListener("click", onClick);
+
+  return overlay;
+};
+
+// 渲染分组列表（完全移除 innerHTML）
 const renderGroupList = (
   groups: browser.tabGroups.TabGroup[],
   container: HTMLDivElement
 ) => {
-  // 清空容器，避免重复渲染
-  container.innerHTML = "";
+  // 清空容器（安全方式）
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
 
   // 无分组时显示提示
   if (groups.length === 0) {
@@ -137,97 +167,80 @@ const renderGroupList = (
       padding: 12px 0;
       text-align: center;
     `;
-    emptyTip.textContent = "No groups found. Create your first group!";
+    emptyTip.textContent = "No groups found. Create your first group!"; // 安全设置文本
     container.appendChild(emptyTip);
     return;
   }
-  
-  // 1. 添加“最顶部插入遮罩”（解决第一个分组无法前置插入问题）
+
+  // 添加顶部插入遮罩
   const topOverlay = createInsertOverlay(
     "top",
     "Add to top",
-    emitBuildGroup
+    async () => {
+      currentGroupConfig.position = "top";
+      await emitBuildGroup();
+    }
   );
   container.appendChild(topOverlay);
 
-  // 2. 遍历渲染分组卡片（含上下遮罩）
-  groups.forEach((group, index) => {
-    // 卡片外层容器：用于包裹“遮罩+卡片”，控制hover显示逻辑
+  // 遍历渲染分组卡片
+  groups.forEach(group => {
+    // 卡片外层容器
     const cardWrapper = document.createElement("div");
     cardWrapper.className = "group-card__wrapper";
 
-    // 分组卡片本体（核心内容）
+    // 分组卡片本体
     const groupCard = document.createElement("div");
     const bgColor = group.color as Color;
     const fontColor = getFontColorByBgColor(bgColor);
 
-    // 卡片样式：背景色+协调字体色+文字阴影
+    // 设置卡片样式
     groupCard.className = "group-card";
     groupCard.dataset.groupId = group.id.toString();
-    groupCard.style.cssText = `
-      background-color: ${bgColor};
-      color: ${fontColor};
-      text-shadow: var(--font-shadow);
-    `;
+    groupCard.style.backgroundColor = bgColor;
+    groupCard.style.color = fontColor;
+    groupCard.style.textShadow = getComputedStyle(document.documentElement).getPropertyValue("--font-shadow");
 
-    // 卡片内容（标题+折叠状态）
-    groupCard.innerHTML = `
-      <div class="group-card__title">${group.title}</div>
-      <div class="group-card__status">
-        ${group.collapsed ? "Collapsed" : "Expanded"}
-      </div>
-    `;
+    // 创建卡片标题（安全方式）
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "group-card__title";
+    titleDiv.textContent! = group.title!; // 用 textContent 避免 XSS
+    groupCard.appendChild(titleDiv);
 
-    // 3. 创建卡片上方遮罩（插入到当前分组之前）
+    // 创建卡片状态（安全方式）
+    const statusDiv = document.createElement("div");
+    statusDiv.className = "group-card__status";
+    statusDiv.textContent! = group.collapsed ? "Collapsed" : "Expanded"; // 安全设置文本
+    groupCard.appendChild(statusDiv);
+
+    // 上方遮罩（插入到当前分组之前）
     const beforeOverlay = createInsertOverlay(
       "top",
       "Add before",
-      async () => { 
-        currentGroupConfig.position = "before"
-        currentGroupConfig.relativeGroupId = group.id
-        await emitBuildGroup()
-      }
-    );
-
-    // 4. 创建卡片下方遮罩（插入到当前分组之后）
-    const afterOverlay = createInsertOverlay(
-      "bottom",
-      "Add after",
       async () => {
-        currentGroupConfig.position = "after"
-        currentGroupConfig.relativeGroupId = group.id
+        currentGroupConfig.position = "before";
+        currentGroupConfig.relativeGroupId = group.id;
         await emitBuildGroup();
       }
     );
 
-    // 5. 组装外层容器：上方遮罩 → 卡片 → 下方遮罩
+    // 下方遮罩（插入到当前分组之后）
+    const afterOverlay = createInsertOverlay(
+      "bottom",
+      "Add after",
+      async () => {
+        currentGroupConfig.position = "after";
+        currentGroupConfig.relativeGroupId = group.id;
+        await emitBuildGroup();
+      }
+    );
+
+    // 组装卡片容器
     cardWrapper.appendChild(beforeOverlay);
     cardWrapper.appendChild(groupCard);
     cardWrapper.appendChild(afterOverlay);
-
-    // 6. 添加到列表容器
     container.appendChild(cardWrapper);
   });
-};
-
-const createInsertOverlay = (
-  position: "top" | "bottom",
-  label: string,
-  onClick: () => void
-) => {
-  const overlay = document.createElement("div");
-  overlay.className = `insert-overlay insert-overlay--${position}`;
-
-
-  // 遮罩内容（加号+提示文字）
-  overlay.innerHTML = `
-    <span class="insert-overlay__plus">+</span>
-    <span class="insert-overlay__label">${label}</span>
-  `;
-
-  // 点击遮罩触发插入逻辑
-  overlay.addEventListener("click", onClick);
-  return overlay;
 };
 
 const updateGroupListView = async (container: HTMLDivElement) => {
