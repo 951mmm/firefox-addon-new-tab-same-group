@@ -1,7 +1,7 @@
 # New Tab Same Group Fix
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
-![version](https://img.shields.io/badge/version-1.8.1-orange)
+![version](https://img.shields.io/badge/version-1.9.0-orange)
 
 **New Tab Same Group Fix** is a Firefox extension that improves tab organization and group management by automatically inserting new tabs into the same group as your current active tab — right after it, at the beginning, or at the end of the group, based on your preference.
 This extension only works with **native tab grouping** as well as **[extension tab group API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabGroups)** (Firefox 139+).
@@ -29,8 +29,10 @@ This extension only works with **native tab grouping** as well as **[extension t
 ## 📖 FAQ
 
 1. The function "1 second delay with cancel" is an experienmental feature(actually it's developed by the last author), it would be removed it in the future.
-2. Due to some of issues, unfortunately, my sidebar is not able to focus to input instantly after opened like the builtin sidebar e.g. **sidebar-history**
+2. Due to some of issues, unfortunately, my is not able to focus to input instantly after opened like the builtin sidebar e.g. **sidebar-history**
 ![sidebar-history-focus](images/sidebar-history-focus.gif)
+3. There is no `focus api` for both tab and tab group provided by MDN. Hence, i simulate focus handler by creating a tab and remove it on the last active index. It may cause tearing if group or tab is too much.
+![terrible tearing](images/focus-tearing.gif)
 
 ---
 
@@ -45,10 +47,11 @@ This extension only works with **native tab grouping** as well as **[extension t
 
 #### create a group simply
 
-![sidebar page](images/sidebar.gif)
+![option](images/option.png)
 *you are able to create a group with page `about:newtab` in a simplier way. And you can toggle it either click the button or typing `Alt+Command+S`*
 
 #### create a group everywhere
+![sidebar](images/sidebar.gif)
 
 ### alternative workflow
 
