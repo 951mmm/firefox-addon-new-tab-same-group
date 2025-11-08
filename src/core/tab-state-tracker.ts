@@ -48,8 +48,12 @@ export class TabStateTracker {
     }
   }
 
-  getLastActiveTab(newTab: Tab) {
+  getLastActiveTab(newTab?: Tab) {
     let source = this.#lastActiveTab
+
+    if (newTab === undefined) {
+      return source
+    }
 
     // 处理快照异常（源标签为新标签自身）
     if (newTab.active && source?.id === newTab.id) source = null

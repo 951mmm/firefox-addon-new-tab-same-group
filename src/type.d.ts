@@ -10,11 +10,15 @@ declare global {
         relativeGroupId: number,
     }
     interface Message {
-        header: "build-group" | "sidebar-open"
+        header: "build-group" | "sidebar-open" | "sidebar-open-ack"
         payload: any
     }
     interface BuildGroupPayload {
         config: GroupConfig
+    }
+
+    interface SidebarOpenAckPayload {
+        groupId: number
     }
 }
 export { }

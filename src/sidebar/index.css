@@ -43,6 +43,11 @@
     --dark-overlay-bg-hover: rgba(255, 255, 255, 0.2);
     --dark-overlay-border: #666;
     --dark-overlay-text: #eee;
+
+    /* 输入框变量 */
+    --input-padding: 8px 12px;
+    --input-border-radius: 4px;
+    --input-font-size: 14px;
 }
 
 /* 基础样式（复用变量，减少重复） */
@@ -88,6 +93,53 @@ body {
     transition: var(--transition-base);
     box-sizing: border-box;
     /* 边框计入尺寸，避免选中时变形 */
+}
+
+/* 控制区样式 */
+.control-section {
+    width: 100%;
+    padding: 8px 0;
+}
+
+/* 按钮基础样式 */
+.control-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--input-border-radius);
+    border: 1px solid;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+    box-sizing: border-box;
+}
+
+/* 浅色模式按钮 */
+@media (prefers-color-scheme: light) {
+    .control-btn {
+        background-color: var(--light-bg);
+        border-color: var(--light-border);
+        color: var(--light-text);
+    }
+
+    .control-btn:hover {
+        background-color: var(--light-overlay-bg-hover);
+        border-color: var(--light-border-strong);
+    }
+}
+
+/* 深色模式按钮 */
+@media (prefers-color-scheme: dark) {
+    .control-btn {
+        background-color: var(--dark-bg);
+        border-color: var(--dark-border);
+        color: var(--dark-text);
+    }
+
+    .control-btn:hover {
+        background-color: var(--dark-overlay-bg-hover);
+        border-color: var(--dark-border-strong);
+    }
 }
 
 /* 分组列表区域 */

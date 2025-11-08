@@ -10,6 +10,7 @@ class Background {
   #lastCommand = new String()
   #groupConfig: GroupConfig | undefined
   #isPending: boolean
+  #sidebarOpen: boolean
 
   constructor() {
     this.#configManager = new ConfigManager()
@@ -17,6 +18,7 @@ class Background {
     this.#groupHandler = new GroupHandler(this.#configManager)
     this.#shortcutManager = new ShortcutManager()
     this.#isPending = false
+    this.#sidebarOpen = false
     this.#bindBrowserEvents()
     this.#setupInstallListener()
     this.#bindExtensionEvents()
@@ -34,12 +36,22 @@ class Background {
           browser.tabs.create({})
           this.#groupConfig = undefined
           break
-        case ShortcutManager.commands.OPEN_SIDEBAR:
-          browser.sidebarAction.open()
+        case ShortcutManager.commands.TOGGLE_SIDEBAR:
+          this.#toggleSidebar()
           break
         default:
           break
       }
+    }
+  }
+
+  #toggleSidebar = () => {
+    if (this.#sidebarOpen) {
+      browser.sidebarAction.close()
+      this.#sidebarOpen = false
+    } else {
+      browser.sidebarAction.open()
+      this.#sidebarOpen = true
     }
   }
 
@@ -53,10 +65,9 @@ class Background {
         break
       }
       case ShortcutManager.commands.OPEN_STANDARD_TAB_IN_NEW_GROUP:
-      case ShortcutManager.commands.OPEN_SIDEBAR: {
+      case ShortcutManager.commands.TOGGLE_SIDEBAR: {
         console.debug(`open new tab [${newTab.id}] on standard way, and in a new group`)
         this.#groupHandler.addToNewGroup(newTab, this.#groupConfig)
-        // 不走调度，走nm
         break
       }
       default: {
@@ -106,7 +117,14 @@ class Background {
         }
         // open the sidebar by btn will fire the msg
         case "sidebar-open": {
-          this.#lastCommand = ShortcutManager.commands.OPEN_SIDEBAR
+          this.#lastCommand = ShortcutManager.commands.TOGGLE_SIDEBAR
+          const lastActiveTab = this.#tabStateTracker.getLastActiveTab()
+          browser.runtime.sendMessage({
+            header: "sidebar-open-ack",
+            payload: {
+              groupId: lastActiveTab?.groupId
+            } as SidebarOpenAckPayload
+          } as Message)
           break
         }
       }
