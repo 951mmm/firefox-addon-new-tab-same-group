@@ -8,20 +8,19 @@ const placementCard = $("#placementCard") as HTMLElement
 const placementRadios = $$("input[name=\"placement\"]") as NodeListOf<HTMLInputElement>
 
 const enableStdShort = $("#enableStandardShortcut") as HTMLInputElement
-const enableDelay = $("#enableDelay") as HTMLInputElement
 
 /* === Load prefs ============================================== */
 chrome.storage.sync.get(
   {
-    enableGroupTab: true, placementMode: "after",
-    enableStandardTabShortcut: true, enableDelayGrouping: false
+    enableGroupTab: true,
+    placementMode: "after",
+    enableStandardTabShortcut: true,
   },
   p => {
     enableGroupTab.checked = p.enableGroupTab
     togglePlacement(p.enableGroupTab)
     placementRadios.forEach(r => r.checked = (r.value === p.placementMode))
     enableStdShort.checked = p.enableStandardTabShortcut
-    enableDelay.checked = p.enableDelayGrouping
   }
 )
 
@@ -37,9 +36,6 @@ placementRadios.forEach(r =>
 )
 enableStdShort.addEventListener("change", () =>
   chrome.storage.sync.set({ enableStandardTabShortcut: enableStdShort.checked })
-)
-enableDelay.addEventListener("change", () =>
-  chrome.storage.sync.set({ enableDelayGrouping: enableDelay.checked })
 )
 
 /* === Shortcut settings links ================================= */

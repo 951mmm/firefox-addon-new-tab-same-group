@@ -103,10 +103,6 @@ input:checked+.slider:before {
 /* === Disabled state ========================================== */
 #placementCard.disabled,
 #standardShortcutCard.disabled,
-#delayCard.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
 
 /* === <kbd> styling & links =================================== */
 kbd {

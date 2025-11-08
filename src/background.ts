@@ -1,13 +1,11 @@
 import { ConfigManager } from "./core/config-manager.js"
 import { ShortcutManager } from "./core/shortcut-manager.js"
 import { GroupHandler } from "./core/group-handler.js"
-import { GroupTaskManager } from "./core/group-task-manager.js"
 import { TabStateTracker } from "./core/tab-state-tracker.js"
 class Background {
   #configManager
   #tabStateTracker
   #groupHandler
-  #groupTaskManager
   #shortcutManager
   #lastCommand = new String()
   #groupConfig: GroupConfig | undefined
@@ -18,11 +16,6 @@ class Background {
     this.#tabStateTracker = new TabStateTracker()
     this.#groupHandler = new GroupHandler(this.#configManager)
     this.#shortcutManager = new ShortcutManager()
-    this.#groupTaskManager = new GroupTaskManager(
-      this.#shortcutManager,
-      this.#configManager,
-      this.#groupHandler
-    )
     this.#isPending = false
     this.#bindBrowserEvents()
     this.#setupInstallListener()
@@ -43,9 +36,6 @@ class Background {
           break
         case ShortcutManager.commands.OPEN_SIDEBAR:
           browser.sidebarAction.open()
-          break
-        case ShortcutManager.commands.CANCEL_PENDING_GROUPING:
-          this.#groupTaskManager.cancelAll()
           break
         default:
           break
