@@ -1,34 +1,34 @@
-import { Config, ConfigManager } from "./config-manager";
+import { Config, ConfigManager } from "./config-manager"
 export class GroupHandler {
-  #configManager;
+  #configManager
 
   constructor(configManager: ConfigManager) {
-    this.#configManager = configManager;
+    this.#configManager = configManager
   }
 
   async addToTabGroup(newTab: Tab, lastActiveTab: Tab) {
     try {
-      const { placementMode } = this.#configManager.getConfig();
+      const { placementMode } = this.#configManager.getConfig()
 
-      if (newTab.windowId == undefined || lastActiveTab.windowId == undefined) return;
+      if (newTab.windowId == undefined || lastActiveTab.windowId == undefined) return
       // 校验分组条件
       if (!lastActiveTab ||
         lastActiveTab.groupId === -1 ||
-        newTab.windowId !== lastActiveTab.windowId) return;
-      if (newTab.id == undefined) return;
+        newTab.windowId !== lastActiveTab.windowId) return
+      if (newTab.id == undefined) return
 
       // 添加到源标签的分组
-      await browser.tabs.group({ groupId: lastActiveTab.groupId, tabIds: [newTab.id] });
+      await browser.tabs.group({ groupId: lastActiveTab.groupId, tabIds: [newTab.id] })
 
-      await this.#handlePlacement(newTab, lastActiveTab, placementMode);
+      await this.#handlePlacement(newTab, lastActiveTab, placementMode)
     } catch (e: any) {
-      console.warn("bad group: ", e.message);
+      console.warn("bad group: ", e.message)
     }
   }
 
   async addToNewGroup(newTab: Tab, groupConfig: GroupConfig | undefined) {
     if (newTab.id === undefined) {
-      return;
+      return
     }
     const groupId = await browser.tabs.group({
       tabIds: [newTab.id]
@@ -73,22 +73,22 @@ placementMode: ${placementMode}
         const groupTabs = await browser.tabs.query({
           groupId: lastActiveTab.groupId,
           windowId: lastActiveTab.windowId
-        });
+        })
         const otherIndices = groupTabs
           .filter(t => t.id !== newTab.id)
-          .map(t => t.index);
-        const targetIndex = otherIndices.length ? Math.min(...otherIndices) : 0;
-        await browser.tabs.move(newTab.id!, { index: targetIndex });
-        break;
+          .map(t => t.index)
+        const targetIndex = otherIndices.length ? Math.min(...otherIndices) : 0
+        await browser.tabs.move(newTab.id!, { index: targetIndex })
+        break
       }
       case "after": {
-        const targetIndex = lastActiveTab.index + 1;
-        await browser.tabs.move(newTab.id!, { index: targetIndex });
-        break;
+        const targetIndex = lastActiveTab.index + 1
+        await browser.tabs.move(newTab.id!, { index: targetIndex })
+        break
       }
       case "last":
         // nop
-        break;
+        break
     }
   }
 }

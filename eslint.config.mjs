@@ -26,7 +26,8 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',  // 关闭强制函数返回类型（按需开启）
       indent: ["error", 2, {
         SwitchCase: 1
-      }]
+      }],
+      semi: ["error", "never"]
     }
   }
 ];

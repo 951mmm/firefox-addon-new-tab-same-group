@@ -3,15 +3,15 @@ browser.runtime.sendMessage({
   header: "sidebar-open"
 } as Message)
 // ANCHOR groupnameInput
-const groupnameInput = document.getElementById("groupname-input") as HTMLInputElement;
+const groupnameInput = document.getElementById("groupname-input") as HTMLInputElement
 window.addEventListener("focus", () => {
   groupnameInput.focus()
 })
 
 groupnameInput.addEventListener("input", () => {
-  currentGroupConfig.title = groupnameInput.value.trim();
+  currentGroupConfig.title = groupnameInput.value.trim()
 
-});
+})
 
 groupnameInput.addEventListener("keyup", async (e) => {
   if (e.key === "Enter") {
@@ -28,11 +28,11 @@ async function emitBuildGroup() {
   await browser.sidebarAction.close()
 }
 // ANCHOR colorOption
-const colorOptions = document.querySelectorAll<HTMLDivElement>(".color-option");
-const optionsArray = Array.from(colorOptions);
-const randomIndex = Math.floor(Math.random() * optionsArray.length);
-const initialColorOption = optionsArray[randomIndex];
-initialColorOption.classList.add("selected");
+const colorOptions = document.querySelectorAll<HTMLDivElement>(".color-option")
+const optionsArray = Array.from(colorOptions)
+const randomIndex = Math.floor(Math.random() * optionsArray.length)
+const initialColorOption = optionsArray[randomIndex]
+initialColorOption.classList.add("selected")
 
 // 当前分组配置（可用于后续业务逻辑）
 const currentGroupConfig: GroupConfig = {
@@ -40,20 +40,20 @@ const currentGroupConfig: GroupConfig = {
   color: initialColorOption.dataset.color as browser.tabGroups.Color || "",
   position: "top",
   relativeGroupId: 0
-};
+}
 
 // 颜色色块点击事件：切换选中状态并更新当前颜色
 colorOptions.forEach(option => {
   option.addEventListener("click", () => {
     // 移除其他色块的选中状态
-    colorOptions.forEach(opt => opt.classList.remove("selected"));
+    colorOptions.forEach(opt => opt.classList.remove("selected"))
     // 选中当前色块
-    option.classList.add("selected");
+    option.classList.add("selected")
     // 更新当前分组颜色
-    currentGroupConfig.color = option.dataset.color as browser.tabGroups.Color || "";
-    console.debug("group color is: ", currentGroupConfig.color);
-  });
-});
+    currentGroupConfig.color = option.dataset.color as browser.tabGroups.Color || ""
+    console.debug("group color is: ", currentGroupConfig.color)
+  })
+})
 
 
 const BackgroundToFontColorMap: Record<Color, {
@@ -90,63 +90,63 @@ const BackgroundToFontColorMap: Record<Color, {
     fontColor: "#333333",  
     fontShadow: "0 0 1px rgba(0, 0, 0, 0.3)"  // 轻微阴影避免“发光”感
   }
-};
+}
 
 const getFontColorByBgColor = (bgColor: Color): string => {
-  const { fontColor, fontShadow } = BackgroundToFontColorMap[bgColor];
+  const { fontColor, fontShadow } = BackgroundToFontColorMap[bgColor]
   
   // 动态设置文字阴影（全局 CSS 变量，供卡片样式使用）
-  document.documentElement.style.setProperty("--font-shadow", fontShadow || "none");
+  document.documentElement.style.setProperty("--font-shadow", fontShadow || "none")
   
-  return fontColor;
+  return fontColor
 }
 
 const getGroupListDOM = () => ({
   groupListContainer: document.getElementById("group-list") as HTMLDivElement | null,
-});
+})
 
 const fetchRealTabGroups = async (): Promise<TabGroup[]> => {
   try {
-    const currentWindow = await browser.windows.getCurrent({});
-    if (!currentWindow.id) throw new Error("Current window ID not found");
+    const currentWindow = await browser.windows.getCurrent({})
+    if (!currentWindow.id) throw new Error("Current window ID not found")
 
-    const groups = await browser.tabGroups.query({ windowId: currentWindow.id });
+    const groups = await browser.tabGroups.query({ windowId: currentWindow.id })
 
     return groups.map(group => ({
       ...group,
       title: group.title || "Untitled Group",
-    }));
+    }))
   } catch (error) {
-    console.error("Failed to fetch tab groups:", error);
-    return []; // 出错时返回空数组，避免页面崩溃
+    console.error("Failed to fetch tab groups:", error)
+    return [] // 出错时返回空数组，避免页面崩溃
   }
-};
+}
 // 创建插入遮罩（纯 DOM 方法）
 const createInsertOverlay = (
   position: "top" | "bottom",
   label: string,
   onClick: () => void
 ) => {
-  const overlay = document.createElement("div");
-  overlay.className = `insert-overlay insert-overlay--${position}`;
+  const overlay = document.createElement("div")
+  overlay.className = `insert-overlay insert-overlay--${position}`
 
   // 创建加号元素
-  const plusSpan = document.createElement("span");
-  plusSpan.className = "insert-overlay__plus";
-  plusSpan.textContent = "+"; // 用 textContent 避免注入风险
+  const plusSpan = document.createElement("span")
+  plusSpan.className = "insert-overlay__plus"
+  plusSpan.textContent = "+" // 用 textContent 避免注入风险
 
   // 创建提示文字元素
-  const labelSpan = document.createElement("span");
-  labelSpan.className = "insert-overlay__label";
-  labelSpan.textContent = label; // 安全设置文本
+  const labelSpan = document.createElement("span")
+  labelSpan.className = "insert-overlay__label"
+  labelSpan.textContent = label // 安全设置文本
 
   // 组装遮罩
-  overlay.appendChild(plusSpan);
-  overlay.appendChild(labelSpan);
-  overlay.addEventListener("click", onClick);
+  overlay.appendChild(plusSpan)
+  overlay.appendChild(labelSpan)
+  overlay.addEventListener("click", onClick)
 
-  return overlay;
-};
+  return overlay
+}
 
 // 渲染分组列表（完全移除 innerHTML）
 const renderGroupList = (
@@ -155,21 +155,21 @@ const renderGroupList = (
 ) => {
   // 清空容器（安全方式）
   while (container.firstChild) {
-    container.removeChild(container.firstChild);
+    container.removeChild(container.firstChild)
   }
 
   // 无分组时显示提示
   if (groups.length === 0) {
-    const emptyTip = document.createElement("div");
+    const emptyTip = document.createElement("div")
     emptyTip.style.cssText = `
       font-size: 12px;
       color: var(--text-secondary, #666);
       padding: 12px 0;
       text-align: center;
-    `;
-    emptyTip.textContent = "No groups found. Create your first group!"; // 安全设置文本
-    container.appendChild(emptyTip);
-    return;
+    `
+    emptyTip.textContent = "No groups found. Create your first group!" // 安全设置文本
+    container.appendChild(emptyTip)
+    return
   }
 
   // 添加顶部插入遮罩
@@ -177,105 +177,105 @@ const renderGroupList = (
     "top",
     "Add to top",
     async () => {
-      currentGroupConfig.position = "top";
-      await emitBuildGroup();
+      currentGroupConfig.position = "top"
+      await emitBuildGroup()
     }
-  );
-  container.appendChild(topOverlay);
+  )
+  container.appendChild(topOverlay)
 
   // 遍历渲染分组卡片
   groups.forEach(group => {
     // 卡片外层容器
-    const cardWrapper = document.createElement("div");
-    cardWrapper.className = "group-card__wrapper";
+    const cardWrapper = document.createElement("div")
+    cardWrapper.className = "group-card__wrapper"
 
     // 分组卡片本体
-    const groupCard = document.createElement("div");
-    const bgColor = group.color as Color;
-    const fontColor = getFontColorByBgColor(bgColor);
+    const groupCard = document.createElement("div")
+    const bgColor = group.color as Color
+    const fontColor = getFontColorByBgColor(bgColor)
 
     // 设置卡片样式
-    groupCard.className = "group-card";
-    groupCard.dataset.groupId = group.id.toString();
-    groupCard.style.backgroundColor = bgColor;
-    groupCard.style.color = fontColor;
-    groupCard.style.textShadow = getComputedStyle(document.documentElement).getPropertyValue("--font-shadow");
+    groupCard.className = "group-card"
+    groupCard.dataset.groupId = group.id.toString()
+    groupCard.style.backgroundColor = bgColor
+    groupCard.style.color = fontColor
+    groupCard.style.textShadow = getComputedStyle(document.documentElement).getPropertyValue("--font-shadow")
 
     // 创建卡片标题（安全方式）
-    const titleDiv = document.createElement("div");
-    titleDiv.className = "group-card__title";
-    titleDiv.textContent! = group.title!; // 用 textContent 避免 XSS
-    groupCard.appendChild(titleDiv);
+    const titleDiv = document.createElement("div")
+    titleDiv.className = "group-card__title"
+    titleDiv.textContent! = group.title! // 用 textContent 避免 XSS
+    groupCard.appendChild(titleDiv)
 
     // 创建卡片状态（安全方式）
-    const statusDiv = document.createElement("div");
-    statusDiv.className = "group-card__status";
-    statusDiv.textContent! = group.collapsed ? "Collapsed" : "Expanded"; // 安全设置文本
-    groupCard.appendChild(statusDiv);
+    const statusDiv = document.createElement("div")
+    statusDiv.className = "group-card__status"
+    statusDiv.textContent! = group.collapsed ? "Collapsed" : "Expanded" // 安全设置文本
+    groupCard.appendChild(statusDiv)
 
     // 上方遮罩（插入到当前分组之前）
     const beforeOverlay = createInsertOverlay(
       "top",
       "Add before",
       async () => {
-        currentGroupConfig.position = "before";
-        currentGroupConfig.relativeGroupId = group.id;
-        await emitBuildGroup();
+        currentGroupConfig.position = "before"
+        currentGroupConfig.relativeGroupId = group.id
+        await emitBuildGroup()
       }
-    );
+    )
 
     // 下方遮罩（插入到当前分组之后）
     const afterOverlay = createInsertOverlay(
       "bottom",
       "Add after",
       async () => {
-        currentGroupConfig.position = "after";
-        currentGroupConfig.relativeGroupId = group.id;
-        await emitBuildGroup();
+        currentGroupConfig.position = "after"
+        currentGroupConfig.relativeGroupId = group.id
+        await emitBuildGroup()
       }
-    );
+    )
 
     // 组装卡片容器
-    cardWrapper.appendChild(beforeOverlay);
-    cardWrapper.appendChild(groupCard);
-    cardWrapper.appendChild(afterOverlay);
-    container.appendChild(cardWrapper);
-  });
-};
+    cardWrapper.appendChild(beforeOverlay)
+    cardWrapper.appendChild(groupCard)
+    cardWrapper.appendChild(afterOverlay)
+    container.appendChild(cardWrapper)
+  })
+}
 
 const updateGroupListView = async (container: HTMLDivElement) => {
-  const groupList = await fetchRealTabGroups();
-  renderGroupList(groupList, container);
+  const groupList = await fetchRealTabGroups()
+  renderGroupList(groupList, container)
 }
 
 const setupGroupEventListeners = (container: HTMLDivElement) => {
   browser.tabGroups.onUpdated.addListener(
     async (group: TabGroup) => {
-      console.debug(`group [${group.id}] updated`);
+      console.debug(`group [${group.id}] updated`)
       updateGroupListView(container)
     }
-  );
+  )
 
   // 监听分组删除事件（分组被删除时触发）
   browser.tabGroups.onRemoved.addListener(async group => {
-    console.debug(`group [${group.id}] removed`);
+    console.debug(`group [${group.id}] removed`)
     updateGroupListView(container)
-  });
+  })
 
   browser.tabGroups.onCreated.addListener(async group => {
     console.debug(`group [${group.id}] create`)
     updateGroupListView(container)
-  });
-};
+  })
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { groupListContainer } = getGroupListDOM();
+  const { groupListContainer } = getGroupListDOM()
 
   if (!groupListContainer) {
-    console.error("Group list container not found in DOM");
-    return;
+    console.error("Group list container not found in DOM")
+    return
   }
 
   updateGroupListView(groupListContainer)
-  setupGroupEventListeners(groupListContainer);
-});
+  setupGroupEventListeners(groupListContainer)
+})

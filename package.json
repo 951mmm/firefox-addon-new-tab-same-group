@@ -2,7 +2,7 @@
   "scripts": {
     "build": "node ./scripts/build.cjs",
     "clean": "rm -rf dist; rm -rf web-ext-artifacts",
-    "lint": "eslint ./src/**/*.ts --fix; web-ext lint",
+    "lint": "eslint ./src/**/*.ts ./src/*.ts --fix; web-ext lint",
     "static:watch": "node ./scripts/watch-static.cjs",
     "ts:watch": "tsc --watch",
     "watch": "run-p static:watch ts:watch"
