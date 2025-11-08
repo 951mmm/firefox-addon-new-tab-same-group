@@ -11,6 +11,7 @@ class Background {
   #shortcutManager
   #lastCommand = new String()
   #groupConfig: GroupConfig | undefined
+  #isPending: boolean
 
   constructor() {
     this.#configManager = new ConfigManager()
@@ -22,6 +23,7 @@ class Background {
       this.#configManager,
       this.#groupHandler
     )
+    this.#isPending = false
     this.#bindBrowserEvents()
     this.#setupInstallListener()
     this.#bindExtensionEvents()
@@ -51,8 +53,9 @@ class Background {
     }
   }
 
-  #handleTabCreated = (newTab: Tab) => {
+  #handleTabCreated = async (newTab: Tab) => {
     const { enableGroupTab } = this.#configManager.getConfig()
+    if (this.#isPending) return
     if (!enableGroupTab) return
     switch (this.#lastCommand) {
       case ShortcutManager.commands.OPEN_STANDARD_NEW_TAB: {
@@ -68,11 +71,32 @@ class Background {
       }
       default: {
         const lastActiveTab = this.#tabStateTracker.getLastActiveTab(newTab)
-        if (lastActiveTab) this.#groupTaskManager.scheduleAddToTabGroup(newTab, lastActiveTab)
+        if (lastActiveTab) {
+          await this.#groupHandler.addToTabGroup(newTab, lastActiveTab)
+          await this.#simulateFocusOnNewTab(newTab)
+        }
         break
       }
     }
     this.#lastCommand = ""
+  }
+
+  /**
+   * becasue `create new tab` will append the new tab on the last
+   * and firefox don't supply any api to resolve the focus
+   * we simulate it roughly. the lackness:
+   * 1. don't create new tab too often
+   * 2. there is tears when jumping between the last and the current active tab
+   * @param newTab new tab
+   */
+  #simulateFocusOnNewTab(newTab: Tab) {
+    this.#isPending = true
+    setTimeout(async () => {
+      const newTabInGroup = (await browser.tabs.query({})).find(tab => tab.id == newTab.id)
+      const tmpTab = await browser.tabs.create({ index: newTabInGroup!.index })
+      this.#isPending = false
+      browser.tabs.remove(tmpTab.id!)
+    }, 100)
   }
 
   // 安装/更新日志
